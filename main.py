@@ -30,16 +30,21 @@ def run():
         if interaction.user == client.user:
             return
         await interaction.response.defer()
-        receive = chatgpt.get_response(user_id, message)
-        await sender.send_message(interaction, message, receive)
+        try:
+            receive = chatgpt.get_response(user_id, message)
+            await sender.send_message(interaction, message, receive)
+        except Exception as e:
+            logger.error(f"Error in chat: {e}")
+            await interaction.followup.send('> Oops! Something went wrong. <')
+    
 
-    @client.tree.command(name="imagine", description="Generate image from text")
-    async def imagine(interaction: discord.Interaction, *, prompt: str):
-        if interaction.user == client.user:
-            return
-        await interaction.response.defer()
-        image_url = dalle.generate(prompt)
-        await sender.send_image(interaction, prompt, image_url)
+    # @client.tree.command(name="imagine", description="Generate image from text")
+    # async def imagine(interaction: discord.Interaction, *, prompt: str):
+    #     if interaction.user == client.user:
+    #         return
+    #     await interaction.response.defer()
+    #     image_url = dalle.generate(prompt)
+    #     await sender.send_image(interaction, prompt, image_url)
 
     @client.tree.command(name="reset", description="Reset ChatGPT conversation history")
     async def reset(interaction: discord.Interaction):
